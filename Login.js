@@ -38,7 +38,6 @@ export default class Login extends React.Component {
         if(this.state.page === 'Login') {
             return (
                 <View style={styles.container}>
-                    <StatusBar backgroundColor={colors.statusBarLight} barStyle="dark-content"/>
                     <View style={styles.loginContainer}>
                         <Image resizeMode="contain" style={styles.logo} source={require('./assets/Logo.jpeg')}/>
                     </View>
