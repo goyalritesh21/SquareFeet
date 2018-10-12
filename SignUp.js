@@ -13,7 +13,7 @@ import {
     StyleSheet
 } from 'react-native';
 import App from './App';
-
+import VerifyOtp from './VerifyOtp';
 const styles = require('./Styles');
 const colors = require('./colors');
 const emailre = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -51,7 +51,7 @@ export default class SignUp extends React.Component {
         this.setState({page: screen});
     };
 
-    handleSignUp = () => {
+    handleSignUp = (screen) => {
         const errors = [];
         if (!this.isValidName()) {
             errors.push('Name is invalid.');
@@ -69,6 +69,14 @@ export default class SignUp extends React.Component {
             const message = errors.join('\n');
             Alert.alert(message);
         }
+        const newUser = {
+            name: this.state.name,
+            email: this.state.email,
+            mobile: this.state.mobile,
+            password: this.state.password
+        }
+        this.setState({user: newUser});
+        this.setState({page: screen});
     };
 
     render() {
@@ -126,7 +134,7 @@ export default class SignUp extends React.Component {
                         </KeyboardAvoidingView>
                         <View>
                             <TouchableOpacity style={styles.MobileButtonContainer}
-                                              onPress={this.handleSignUp}>
+                                              onPress={this.handleSignUp.bind(this, 'VerifyOtp')}>
                                 <Text style={styles.buttonText}> Sign Up </Text>
                             </TouchableOpacity>
                             <View style={styles.TextContainer}>
@@ -143,6 +151,11 @@ export default class SignUp extends React.Component {
                         </View>
                     </View>
                 </View>
+            );
+        }
+        else if (this.state.page === 'VerifyOtp'){
+            return(
+                <VerifyOtp user={this.state.user} from={'SignUp'}/>
             );
         }
         else {
