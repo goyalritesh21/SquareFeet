@@ -97,7 +97,7 @@ window._user = {
                 }
 
                 this.loginLocal(res);
-                config.onSuccess(res.pecfestId);
+                config.onSuccess(res.username);
             })
             .catch(err => {
                 console.log("This should not happen");
