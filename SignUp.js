@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import App from './App';
 import VerifyOtp from './VerifyOtp';
+
 const styles = require('./Styles');
 const colors = require('./colors');
 const emailre = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -74,9 +75,42 @@ export default class SignUp extends React.Component {
             email: this.state.email,
             mobile: this.state.mobile,
             password: this.state.password
-        }
+        };
         this.setState({user: newUser});
-        this.setState({page: screen});
+        user.signUp(newUser, {
+            onSuccess: (res) => {
+                user.checkVerified(this.state.user.mobile, {
+                    onSuccess: (verified) => {
+                        if (verified) {
+                            Alert.alert("Sign Up", "You have registered successfully.");
+                            this.setState({page: 'VerifyOtp', user: res});
+                        } else {
+                            this.setState({submitting: false});
+                        }
+                    },
+                    onFailed: (err) => {
+                        this.setState({
+                            submitting: false,
+                            error: true,
+                            message: err.message || 'Unknown error occurred.'
+                        });
+                        Alert.alert(this.state.message);
+                    }
+                })
+            },
+            onFailed: (err) => {
+                if (typeof err.ACK !== 'undefined') {
+                    if (err.ACK === 'ALREADY') {
+                        this.setState({message: 'Account already exists. Please Login with PECFEST ID.', value: 'login'});
+                        Alert.alert(this.state.message);
+                    }
+                    else {
+                        this.setState({message: 'Please Try Signing Up Again.'});
+                        Alert.alert(this.state.message);
+                    }
+                }
+            }
+        });
     };
 
     render() {
@@ -153,8 +187,8 @@ export default class SignUp extends React.Component {
                 </View>
             );
         }
-        else if (this.state.page === 'VerifyOtp'){
-            return(
+        else if (this.state.page === 'VerifyOtp') {
+            return (
                 <VerifyOtp user={this.state.user} from={'SignUp'}/>
             );
         }
